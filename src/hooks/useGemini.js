@@ -89,7 +89,7 @@ export function useGemini() {
         if (!response.ok || !result?.success) {
           const errMessage =
             result?.error?.message ||
-            "Unable to get a response from the AI Support Assistant.";
+            "Unable to get a response from the Groq AI Support Assistant.";
           const errCode = result?.error?.code || "CHAT_ERROR";
           const errObj = { code: errCode, message: errMessage };
           setError(errObj);

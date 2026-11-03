@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { LANGUAGES, SUGGESTED_CHAT_QUESTIONS } from "@/config/constants";
 import { formatDateTime } from "@/lib/utils";
 import ErrorMessage from "@/components/ui/ErrorMessage";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const INITIAL_WELCOME_MESSAGES = {
   English:
@@ -116,7 +118,7 @@ export default function AIChat({
           code: result.error?.code || "CHAT_ERROR",
           message:
             result.error?.message ||
-            "Unable to get a response from Gemini AI. Please verify GEMINI_API_KEY in .env.local.",
+            "Unable to get a response from Groq. Please verify GROQ_API_KEY in .env.local.",
         });
       }
     } catch (error) {
@@ -125,7 +127,7 @@ export default function AIChat({
         code: "CHAT_ERROR",
         message:
           error?.message ||
-          "Unable to get a response from Gemini AI. Please verify GEMINI_API_KEY in .env.local.",
+          "Unable to get a response from Groq. Please verify GROQ_API_KEY in .env.local.",
       });
     }
   };
@@ -146,7 +148,7 @@ export default function AIChat({
                 Suggested Questions
               </h3>
               <p className="text-xs text-slate-500">
-                Click any common telecom issue to ask Gemini
+                Click any common telecom issue to ask the AI assistant
               </p>
             </div>
             <span className="rounded-md bg-cyan-50 px-2 py-0.5 text-[10px] font-bold text-cyan-800 border border-cyan-200">
@@ -220,7 +222,7 @@ export default function AIChat({
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
               </div>
               <p className="text-[11px] text-slate-500">
-                Powered by Google Gemini • Session History Active
+                Powered by Groq • Session History Active
               </p>
             </div>
           </div>
@@ -276,8 +278,18 @@ export default function AIChat({
                     </span>
                     <span>{formatDateTime(msg.timestamp)}</span>
                   </div>
-                  <div className="whitespace-pre-line leading-relaxed">
-                    {msg.content}
+                  <div
+                    className={`chat-markdown leading-relaxed ${
+                      isUser ? "whitespace-pre-wrap" : ""
+                    }`}
+                  >
+                    {isUser ? (
+                      msg.content
+                    ) : (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.content}
+                      </ReactMarkdown>
+                    )}
                   </div>
                 </div>
               </div>

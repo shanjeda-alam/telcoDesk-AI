@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import {
   analyzeComplaintWithGemini,
-  chatWithGeminiAssistant,
   GeminiServiceError,
 } from "@/lib/gemini";
+import {
+  chatWithGroqAssistant,
+  GroqServiceError,
+} from "@/lib/groq";
 
 // Simple in-memory sliding-window rate limiter per client IP
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
@@ -101,7 +104,7 @@ export async function POST(request) {
     }
 
     if (mode === "chat") {
-      const chatResult = await chatWithGeminiAssistant(payload || body);
+      const chatResult = await chatWithGroqAssistant(payload || body);
       return NextResponse.json(
         {
           success: true,
@@ -123,7 +126,10 @@ export async function POST(request) {
       { status: 400 }
     );
   } catch (error) {
-    if (error instanceof GeminiServiceError) {
+    if (
+      error instanceof GeminiServiceError ||
+      error instanceof GroqServiceError
+    ) {
       return NextResponse.json(
         {
           success: false,

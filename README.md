@@ -2,7 +2,7 @@
 
 > **Smarter Complaints. Faster Solutions. Better Connectivity.**
 
-**TelcoDesk AI** is a full-stack, bilingual (**English & বাংলা**) telecom customer complaint management and Network Operations Center (NOC) triage platform built with **Next.js (App Router)**, **React**, **Tailwind CSS**, **DaisyUI**, and the official **Google Gemini SDK (`@google/genai`)**.
+**TelcoDesk AI** is a full-stack, bilingual (**English & বাংলা**) telecom customer complaint management and Network Operations Center (NOC) triage platform built with **Next.js (App Router)**, **React**, **Tailwind CSS**, **DaisyUI**, **Google Gemini**, and **Groq**.
 
 ---
 
@@ -33,7 +33,7 @@
    - Multi-criteria search and filtering by **Operator**, **Category**, **Priority**, and **Status**.
    - Status transition updates, support note logging, one-click complaint resolution, and demo record deletion with confirmation.
 6. **AI Support Assistant (`AIChat.jsx`)**
-   - Interactive bilingual (English & বাংলা) telecom troubleshooting chatbot powered by Google Gemini.
+   - Interactive bilingual (English & বাংলা) telecom troubleshooting chatbot powered by Groq (`openai/gpt-oss-120b` by default).
    - Includes suggested telecom questions, session conversation history, loading states, error recovery, and chat reset.
 
 ---
@@ -41,8 +41,8 @@
 ## 2. Technology Stack
 
 - **Frontend:** Next.js 15 (App Router), React 19, JavaScript (ES2024+, zero TypeScript), Tailwind CSS v4, DaisyUI v5
-- **Backend:** Next.js Server-Side API Routes (`POST /api/gemini`)
-- **AI Engine:** Official Google Gen AI SDK (`@google/genai`)
+- **Backend:** Next.js Server-Side API Route (`POST /api/gemini`; Gemini for complaint analysis and Groq for chat)
+- **AI Engines:** Google Gemini (`@google/genai`) for complaint analysis; Groq chat completions for the AI assistant
 - **Storage:** Client-side `localStorage` with hydration safety & preloaded Bangladesh telecom demo dataset
 - **Deployment Target:** Firebase App Hosting (`apphosting.yaml`)
 
@@ -103,7 +103,7 @@ telcodesk-ai/
 
 ---
 
-## 4. Local Setup & Gemini API Configuration
+## 4. Local Setup & AI API Configuration
 
 ### Step 1: Install Dependencies
 
@@ -113,17 +113,19 @@ npm install
 
 ### Step 2: Configure `.env.local`
 
-Edit `.env.local` in the root directory (or copy from `.env.local.example`) and provide your Google Gemini API key and model ID:
+Create or edit `.env.local` in the project root and set your API keys. Gemini remains responsible for complaint analysis; only the AI Support Assistant uses Groq.
 
 ```env
 GEMINI_API_KEY=your_actual_gemini_api_key
 GEMINI_MODEL=gemini-3.1-flash-lite
+GROQ_API_KEY=your_actual_groq_api_key
+GROQ_MODEL=openai/gpt-oss-120b
 ```
 
 **Security Notes:**
-- Credentials are read **strictly on the server** via `process.env.GEMINI_API_KEY` and `process.env.GEMINI_MODEL` inside `src/lib/gemini.js`.
-- Never use `NEXT_PUBLIC_GEMINI_API_KEY`.
-- `.env.local` is listed in `.gitignore` and is never exposed to browser bundles.
+- Credentials are read strictly on the server. `src/lib/gemini.js` uses the Gemini variables for complaint analysis; `src/lib/groq.js` uses the Groq variables for chatbot replies.
+- Never prefix either API key with `NEXT_PUBLIC_`.
+- `.env.local` is listed in `.gitignore` and is never exposed to browser bundles. Restart `npm run dev` after changing it.
 
 ### Step 3: Run Development Server
 
@@ -144,22 +146,24 @@ npm run start
 
 ## 5. Firebase App Hosting Deployment
 
-TelcoDesk AI includes `apphosting.yaml` pre-configured for **Firebase App Hosting** with full support for Next.js server-side API routes (`POST /api/gemini`). Static export is intentionally disabled so server-side Gemini routes remain secure.
+TelcoDesk AI includes `apphosting.yaml` pre-configured for **Firebase App Hosting** with server-side Gemini and Groq API credentials. Static export is intentionally disabled so provider keys remain secure.
 
-### Configuring Gemini Secrets in Firebase
+### Configuring AI Secrets in Firebase
 
 1. Install the Firebase CLI and authenticate:
    ```bash
    npm install -g firebase-tools
    firebase login
    ```
-2. Store your `GEMINI_API_KEY` securely in Google Cloud Secret Manager via Firebase App Hosting:
+2. Store both API keys securely in Google Cloud Secret Manager via Firebase App Hosting:
    ```bash
    firebase apphosting:secrets:set GEMINI_API_KEY
+   firebase apphosting:secrets:set GROQ_API_KEY
    ```
-3. Grant your Firebase App Hosting backend access to the secret when prompted, or run:
+3. Grant your Firebase App Hosting backend access to each secret when prompted, or run:
    ```bash
    firebase apphosting:secrets:grantaccess GEMINI_API_KEY --backend <your-backend-id>
+   firebase apphosting:secrets:grantaccess GROQ_API_KEY --backend <your-backend-id>
    ```
-4. Verify `GEMINI_MODEL` in `apphosting.yaml` matches your desired Gemini model (default: `gemini-3.1-flash-lite`).
+4. `GEMINI_MODEL` and `GROQ_MODEL` are configured in `apphosting.yaml`.
 5. Connect your repository in the Firebase Console under **App Hosting** or deploy when ready.

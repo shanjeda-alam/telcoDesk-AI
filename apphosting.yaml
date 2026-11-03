@@ -10,6 +10,7 @@ runConfig:
 # Environment variables and secrets for server-side Next.js API routes.
 # Configure the secret in Google Cloud Secret Manager via:
 #   firebase apphosting:secrets:set GEMINI_API_KEY
+#   firebase apphosting:secrets:set GROQ_API_KEY
 env:
   - variable: GEMINI_API_KEY
     secret: GEMINI_API_KEY
@@ -17,6 +18,15 @@ env:
       - RUNTIME
   - variable: GEMINI_MODEL
     value: gemini-3.1-flash-lite
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: GROQ_API_KEY
+    secret: GROQ_API_KEY
+    availability:
+      - RUNTIME
+  - variable: GROQ_MODEL
+    value: openai/gpt-oss-120b
     availability:
       - BUILD
       - RUNTIME
