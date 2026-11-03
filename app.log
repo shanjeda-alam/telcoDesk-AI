@@ -1,0 +1,23 @@
+
+> telcodesk-ai@1.0.0 dev
+> next dev
+
+   ▲ Next.js 15.5.28
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.56.1:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4.7s
+ ○ Compiling / ...
+/*! 🌼 daisyUI 5.7.50 */
+ ✓ Compiled / in 10.8s (592 modules)
+ GET / 200 in 12181ms
+ ✓ Compiled in 1275ms (592 modules)
+ ✓ Compiled in 933ms (592 modules)
+   Reload env: .env.local
+ ✓ Compiled in 367ms (235 modules)
+ ✓ Compiled in 935ms (249 modules)
+ ✓ Compiled in 826ms (249 modules)
+   Reload env: .env.local
+ ✓ Compiled in 228ms (235 modules)
