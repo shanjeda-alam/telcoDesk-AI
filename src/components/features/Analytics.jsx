@@ -76,7 +76,7 @@ export default function Analytics({
             {stats?.bySentiment?.Frustrated ?? 0}
           </p>
           <p className="text-[11px] text-slate-500">
-            Detected by Gemini sentiment engine
+            Detected by AI sentiment analysis
           </p>
         </div>
 

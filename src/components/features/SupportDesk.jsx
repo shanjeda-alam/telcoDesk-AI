@@ -155,11 +155,11 @@ export default function SupportDesk({
 
     if (result.success && result.data) {
       onAttachAnalysis(activeTicket.id, result.data);
-      showToast(`Gemini AI analysis updated for ${activeTicket.id}.`);
+      showToast(`AI analysis updated for ${activeTicket.id}.`);
     } else {
       setAiError(
         result.error?.message ||
-          "Unable to complete Gemini AI analysis. Check server .env.local configuration."
+          "Unable to complete AI analysis. Check GROQ_API_KEY in server .env.local."
       );
     }
   };
@@ -535,13 +535,13 @@ export default function SupportDesk({
 
               {aiError && (
                 <ErrorMessage
-                  title="Gemini AI Error"
+                  title="AI Analysis Error"
                   message={aiError}
                   onDismiss={() => setAiError(null)}
                 />
               )}
 
-              {/* Gemini AI Diagnostic View */}
+              {/* AI Diagnostic View */}
               <ComplaintAnalysis
                 analysis={activeTicket.aiAnalysis}
                 isAnalyzing={isAnalyzing}

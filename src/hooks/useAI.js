@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 
-export function useGemini() {
+export function useAI() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isChatting, setIsChatting] = useState(false);
   const [error, setError] = useState(null);
@@ -12,14 +12,14 @@ export function useGemini() {
   }, []);
 
   /**
-   * Calls POST /api/gemini with mode: "analyze"
+   * Calls POST /api/ai with mode: "analyze"
    */
   const analyzeComplaint = useCallback(async (complaintData) => {
     setIsAnalyzing(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/gemini", {
+      const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +35,7 @@ export function useGemini() {
       if (!response.ok || !result?.success) {
         const errMessage =
           result?.error?.message ||
-          "Failed to analyze complaint with Gemini AI.";
+          "Failed to analyze complaint with AI.";
         const errCode = result?.error?.code || "AI_ERROR";
         const errObj = { code: errCode, message: errMessage };
         setError(errObj);
@@ -61,7 +61,7 @@ export function useGemini() {
   }, []);
 
   /**
-   * Calls POST /api/gemini with mode: "chat"
+   * Calls POST /api/ai with mode: "chat"
    */
   const sendChatMessage = useCallback(
     async ({ message, language = "English", history = [] }) => {
@@ -69,7 +69,7 @@ export function useGemini() {
       setError(null);
 
       try {
-        const response = await fetch("/api/gemini", {
+        const response = await fetch("/api/ai", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

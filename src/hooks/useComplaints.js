@@ -108,7 +108,7 @@ export function useComplaints() {
           {
             status: "Submitted",
             note: aiAnalysis
-              ? "Complaint submitted and automatically triaged by TelcoDesk Gemini AI."
+              ? "Complaint submitted and automatically triaged by TelcoDesk AI."
               : "Complaint submitted without AI analysis (saved via offline/fallback resilience).",
             timestamp: now,
           },
@@ -184,7 +184,7 @@ export function useComplaints() {
   );
 
   /**
-   * Attaches or refreshes Gemini AI analysis on an existing complaint
+   * Attaches or refreshes AI analysis on an existing complaint
    */
   const attachAiAnalysis = useCallback(
     (ticketId, aiAnalysis) => {
@@ -202,7 +202,7 @@ export function useComplaints() {
             ...(Array.isArray(item.timeline) ? item.timeline : []),
             {
               status: item.status,
-              note: "Gemini AI diagnostic analysis completed and attached to ticket.",
+              note: "AI diagnostic analysis completed and attached to ticket.",
               timestamp: now,
             },
           ],

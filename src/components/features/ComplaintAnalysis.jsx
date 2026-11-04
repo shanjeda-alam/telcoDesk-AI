@@ -12,7 +12,7 @@ export default function ComplaintAnalysis({
   if (isAnalyzing) {
     return (
       <Loading
-        label="Gemini AI is analyzing telecom complaint..."
+        label="AI is analyzing telecom complaint..."
         subLabel="Evaluating category, priority, sentiment, root causes & troubleshooting steps"
       />
     );
@@ -25,8 +25,8 @@ export default function ComplaintAnalysis({
           AI Diagnostic Analysis Not Yet Attached
         </p>
         <p className="mt-1 text-xs text-slate-500">
-          This complaint was saved without AI triage. You can run Gemini AI
-          diagnostics anytime when the server API key is configured.
+          This complaint was saved without AI triage. You can run AI diagnostics
+          anytime when the server API key is configured.
         </p>
         {onTriggerAnalysis && (
           <button
@@ -34,7 +34,7 @@ export default function ComplaintAnalysis({
             onClick={onTriggerAnalysis}
             className="btn btn-xs mt-3 border-none bg-blue-700 text-white hover:bg-blue-800"
           >
-            Run Gemini AI Analysis
+            Run AI Analysis
           </button>
         )}
       </div>
@@ -57,7 +57,7 @@ export default function ComplaintAnalysis({
             </svg>
           </span>
           <h4 className="text-xs font-bold uppercase tracking-wider text-blue-800">
-            Gemini AI Telecom Diagnostic Report
+            AI Telecom Diagnostic Report
           </h4>
         </div>
 

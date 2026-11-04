@@ -68,7 +68,7 @@ export default function ComplaintList({
     } else {
       setAiError(
         result.error?.message ||
-          "Could not complete Gemini AI analysis. Check server .env.local configuration."
+          "Could not complete AI analysis. Check GROQ_API_KEY in server .env.local."
       );
     }
   };
@@ -348,7 +348,7 @@ export default function ComplaintList({
                 />
               )}
 
-              {/* Gemini AI Analysis Card */}
+              {/* AI Analysis Card */}
               <ComplaintAnalysis
                 analysis={activeComplaint.aiAnalysis}
                 isAnalyzing={isAnalyzing}
