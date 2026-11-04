@@ -66,7 +66,7 @@ export default function DashboardStats({
             <p className="mt-1 max-w-2xl text-xs leading-relaxed text-slate-600 sm:text-sm">
               Automated bilingual (English &amp; বাংলা) complaint classification,
               sentiment detection, root-cause diagnostics, and support desk SLA
-              tracking powered by Google Gemini AI.
+              tracking powered by Groq AI.
             </p>
           </div>
 

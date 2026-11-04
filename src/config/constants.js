@@ -50,7 +50,7 @@ export const NAVIGATION_TABS = [
     id: "submit",
     label: "Submit Complaint",
     shortLabel: "Submit",
-    description: "File a new telecom issue with instant Gemini AI triage",
+    description: "File a new telecom issue with instant AI triage",
     roles: ["customer", "agent"],
   },
   {
@@ -156,7 +156,7 @@ export const INITIAL_DEMO_COMPLAINTS = [
     timeline: [
       {
         status: "Submitted",
-        note: "Complaint submitted and analyzed by TelcoDesk Gemini AI.",
+        note: "Complaint submitted and analyzed by TelcoDesk AI.",
         timestamp: "2026-10-30T09:15:00.000Z",
       },
       {
@@ -260,7 +260,7 @@ export const INITIAL_DEMO_COMPLAINTS = [
     timeline: [
       {
         status: "Submitted",
-        note: "Complaint submitted and prioritized by Gemini AI.",
+        note: "Complaint submitted and prioritized by AI.",
         timestamp: "2026-10-31T08:05:00.000Z",
       },
     ],

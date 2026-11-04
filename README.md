@@ -2,7 +2,7 @@
 
 > **Smarter Complaints. Faster Solutions. Better Connectivity.**
 
-**TelcoDesk AI** is a full-stack, bilingual (**English & বাংলা**) telecom customer complaint management and Network Operations Center (NOC) triage platform built with **Next.js (App Router)**, **React**, **Tailwind CSS**, **DaisyUI**, **Google Gemini**, and **Groq**.
+**TelcoDesk AI** is a full-stack, bilingual (**English & বাংলা**) telecom customer complaint management and Network Operations Center (NOC) triage platform built with **Next.js (App Router)**, **React**, **Tailwind CSS**, **DaisyUI**, and **Groq**.
 
 ---
 
@@ -15,9 +15,9 @@
    - Validated telecom complaint form supporting **Grameenphone**, **Robi**, **Banglalink**, **Teletalk**, and **Other**.
    - Covers 8 telecom issue categories: *Internet Connectivity, Network Coverage, Call Drop, SIM Card Problem, Recharge Problem, Billing Issue, SMS Problem, Other*.
    - Generates sequential unique Ticket IDs (`TEL-2026-0001`, `TEL-2026-0002`, etc.).
-   - Offline/API fallback resilience: If the Gemini API is unconfigured or unreachable, customer complaints are still safely saved to `localStorage` and can be analyzed later on demand.
-3. **Gemini AI Complaint Analyzer (`ComplaintAnalysis.jsx`)**
-   - Uses structured JSON output from Google Gemini to return:
+   - Offline/API fallback resilience: If the Groq API is unconfigured or unreachable, customer complaints are still safely saved to `localStorage` and can be analyzed later on demand.
+3. **AI Complaint Analyzer (`ComplaintAnalysis.jsx`)**
+   - Uses structured JSON output from Groq to return:
      - **Classified Category**
      - **Priority Level** (`High`, `Medium`, `Low`)
      - **Subscriber Sentiment** (`Frustrated`, `Neutral`, `Satisfied`)
@@ -41,8 +41,8 @@
 ## 2. Technology Stack
 
 - **Frontend:** Next.js 15 (App Router), React 19, JavaScript (ES2024+, zero TypeScript), Tailwind CSS v4, DaisyUI v5
-- **Backend:** Next.js Server-Side API Route (`POST /api/gemini`; Gemini for complaint analysis and Groq for chat)
-- **AI Engines:** Google Gemini (`@google/genai`) for complaint analysis; Groq chat completions for the AI assistant
+- **Backend:** Next.js Server-Side API Route (`POST /api/ai`) for complaint analysis and chat
+- **AI Engine:** Groq chat completions for complaint analysis and the AI assistant
 - **Storage:** Client-side `localStorage` with hydration safety & preloaded Bangladesh telecom demo dataset
 - **Deployment Target:** Firebase App Hosting (`apphosting.yaml`)
 
@@ -59,8 +59,8 @@ telcodesk-ai/
 │       └── network-banner.svg
 ├── src/
 │   ├── app/
-│   │   ├── api/gemini/
-│   │   │   └── route.js            # POST /api/gemini ('analyze' & 'chat' modes)
+│   │   ├── api/ai/
+│   │   │   └── route.js            # POST /api/ai ('analyze' & 'chat' modes)
 │   │   ├── globals.css             # Tailwind CSS & DaisyUI configuration
 │   │   ├── layout.js               # Root application layout
 │   │   └── page.js                 # Main multi-module workspace controller
@@ -68,7 +68,7 @@ telcodesk-ai/
 │   │   ├── features/
 │   │   │   ├── AIChat.jsx          # Bilingual AI Support Assistant
 │   │   │   ├── Analytics.jsx       # Operator, category, sentiment & SLA analytics
-│   │   │   ├── ComplaintAnalysis.jsx # Gemini AI diagnostic cards
+│   │   │   ├── ComplaintAnalysis.jsx # AI diagnostic cards
 │   │   │   ├── ComplaintForm.jsx   # Validated complaint submission & ticket generator
 │   │   │   ├── ComplaintList.jsx   # Ticket ID & Mobile Number tracking view
 │   │   │   ├── DashboardStats.jsx  # KPI overview & quick complaint submission
@@ -86,9 +86,9 @@ telcodesk-ai/
 │   │   └── constants.js            # Operators, categories, statuses & demo data
 │   ├── hooks/
 │   │   ├── useComplaints.js        # localStorage CRUD, search, filter & stats hook
-│   │   └── useGemini.js            # Client hook for /api/gemini requests
+│   │   └── useAI.js                # Client hook for /api/ai requests
 │   └── lib/
-│       ├── gemini.js               # Server-side @google/genai helper & validation
+│       ├── groq.js                 # Server-side Groq helpers & validation
 │       └── utils.js                # Ticket ID generator, form validator & stats engine
 ├── .env.local                      # Local server-side credentials (gitignored)
 ├── .env.local.example              # Environment template with placeholders
@@ -113,18 +113,16 @@ npm install
 
 ### Step 2: Configure `.env.local`
 
-Create or edit `.env.local` in the project root and set your API keys. Gemini remains responsible for complaint analysis; only the AI Support Assistant uses Groq.
+Create or edit `.env.local` in the project root and configure your Groq API key:
 
 ```env
-GEMINI_API_KEY=your_actual_gemini_api_key
-GEMINI_MODEL=gemini-3.1-flash-lite
 GROQ_API_KEY=your_actual_groq_api_key
 GROQ_MODEL=openai/gpt-oss-120b
 ```
 
 **Security Notes:**
-- Credentials are read strictly on the server. `src/lib/gemini.js` uses the Gemini variables for complaint analysis; `src/lib/groq.js` uses the Groq variables for chatbot replies.
-- Never prefix either API key with `NEXT_PUBLIC_`.
+- Credentials are read strictly on the server by `src/lib/groq.js` for both complaint analysis and chatbot replies.
+- Never prefix the API key with `NEXT_PUBLIC_`.
 - `.env.local` is listed in `.gitignore` and is never exposed to browser bundles. Restart `npm run dev` after changing it.
 
 ### Step 3: Run Development Server
@@ -146,7 +144,7 @@ npm run start
 
 ## 5. Firebase App Hosting Deployment
 
-TelcoDesk AI includes `apphosting.yaml` pre-configured for **Firebase App Hosting** with server-side Gemini and Groq API credentials. Static export is intentionally disabled so provider keys remain secure.
+TelcoDesk AI includes `apphosting.yaml` pre-configured for **Firebase App Hosting** with the server-side Groq API credential. Static export is intentionally disabled so the provider key remains secure.
 
 ### Configuring AI Secrets in Firebase
 
@@ -155,15 +153,13 @@ TelcoDesk AI includes `apphosting.yaml` pre-configured for **Firebase App Hostin
    npm install -g firebase-tools
    firebase login
    ```
-2. Store both API keys securely in Google Cloud Secret Manager via Firebase App Hosting:
+2. Store the API key securely in Google Cloud Secret Manager via Firebase App Hosting:
    ```bash
-   firebase apphosting:secrets:set GEMINI_API_KEY
    firebase apphosting:secrets:set GROQ_API_KEY
    ```
-3. Grant your Firebase App Hosting backend access to each secret when prompted, or run:
+3. Grant your Firebase App Hosting backend access to the secret when prompted, or run:
    ```bash
-   firebase apphosting:secrets:grantaccess GEMINI_API_KEY --backend <your-backend-id>
    firebase apphosting:secrets:grantaccess GROQ_API_KEY --backend <your-backend-id>
    ```
-4. `GEMINI_MODEL` and `GROQ_MODEL` are configured in `apphosting.yaml`.
+4. `GROQ_MODEL` is configured in `apphosting.yaml`.
 5. Connect your repository in the Firebase Console under **App Hosting** or deploy when ready.

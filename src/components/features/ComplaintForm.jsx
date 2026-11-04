@@ -102,21 +102,21 @@ export default function ComplaintForm({
 
     setFieldErrors({});
 
-    // Attempt Gemini AI Complaint Analysis
+    // Analyze the complaint before saving it.
     const aiResult = await analyzeComplaint(formData);
 
     if (aiResult.success && aiResult.data) {
       const saved = onCreateComplaint(formData, aiResult.data);
       setSubmittedTicket(saved);
     } else {
-      // Save complaint even if Gemini fails (Section 5 requirement)
+      // Save the complaint even if AI analysis fails.
       const saved = onCreateComplaint(formData, null);
       setSubmittedTicket(saved);
       setAiWarning({
         code: aiResult.error?.code || "AI_UNAVAILABLE",
         message:
           aiResult.error?.message ||
-          "Gemini AI analysis could not be completed, so your complaint was saved directly without AI triage.",
+          "AI analysis could not be completed, so your complaint was saved directly without AI triage.",
       });
     }
   };
@@ -144,7 +144,7 @@ export default function ComplaintForm({
         code: aiResult.error?.code || "AI_UNAVAILABLE",
         message:
           aiResult.error?.message ||
-          "Still unable to reach Gemini AI. Verify GEMINI_API_KEY in .env.local.",
+          "Still unable to reach the AI service. Verify GROQ_API_KEY in .env.local.",
       });
     }
   };
@@ -168,7 +168,7 @@ export default function ComplaintForm({
               </h2>
               <p className="text-xs text-slate-500">
                 Provide your subscriber and issue details for instant ticket
-                generation &amp; Gemini AI triage
+                generation &amp; AI triage
               </p>
             </div>
 
@@ -380,7 +380,7 @@ export default function ComplaintForm({
                     <span>Analyzing &amp; Generating Ticket...</span>
                   </>
                 ) : (
-                  <span>Submit &amp; Analyze with Gemini AI</span>
+                  <span>Submit &amp; Analyze with AI</span>
                 )}
               </button>
             </div>
@@ -388,7 +388,7 @@ export default function ComplaintForm({
         </div>
       </div>
 
-      {/* Right Column: Ticket Confirmation & Live Gemini AI Analyzer Panel (5 cols) */}
+      {/* Right Column: Ticket Confirmation & Live AI Analyzer Panel (5 cols) */}
       <div className="space-y-4 lg:col-span-5">
         {submittedTicket ? (
           <>
@@ -432,7 +432,7 @@ export default function ComplaintForm({
               </div>
             </div>
 
-            {/* Warning if Gemini failed but complaint was saved */}
+            {/* Warning if AI analysis failed but complaint was saved */}
             {aiWarning && (
               <ErrorMessage
                 variant="warning"
@@ -444,7 +444,7 @@ export default function ComplaintForm({
               />
             )}
 
-            {/* Gemini AI Analysis Card */}
+            {/* AI Analysis Card */}
             <ComplaintAnalysis
               analysis={submittedTicket.aiAnalysis}
               isAnalyzing={isAnalyzing}
@@ -471,7 +471,7 @@ export default function ComplaintForm({
               </div>
               <div>
                 <h3 className="text-sm font-bold text-slate-900">
-                  Gemini AI Complaint Analyzer
+                  AI Complaint Analyzer
                 </h3>
                 <p className="text-xs text-slate-500">
                   Real-time bilingual telecom triage &amp; root-cause analysis
@@ -488,7 +488,7 @@ export default function ComplaintForm({
                 <p className="leading-relaxed">
                   When you submit a complaint,{" "}
                   <strong className="text-slate-800">TelcoDesk AI</strong>{" "}
-                  processes the issue securely on the server using Google Gemini
+                  processes the issue securely on the server using Groq
                   and generates:
                 </p>
 
@@ -533,7 +533,7 @@ export default function ComplaintForm({
                 </ul>
 
                 <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-3 text-[11px] text-blue-900">
-                  <strong>Offline Resilience:</strong> Even if the Gemini API key
+                  <strong>Offline Resilience:</strong> Even if the Groq API key
                   is not yet configured in <code>.env.local</code>, your
                   complaint will still be safely recorded with a valid Ticket ID.
                 </div>

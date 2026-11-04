@@ -53,7 +53,7 @@ export default function Header({
                 {currentTabInfo.label}
               </h1>
               <span className="hidden rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-0.5 text-[11px] font-semibold text-cyan-800 sm:inline-block">
-                Gemini AI Enabled
+                Groq AI Enabled
               </span>
             </div>
             <p className="hidden text-xs text-slate-500 md:block">

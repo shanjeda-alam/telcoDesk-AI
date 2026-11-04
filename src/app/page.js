@@ -11,7 +11,7 @@ import Analytics from "@/components/features/Analytics";
 import Loading from "@/components/ui/Loading";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import { useComplaints } from "@/hooks/useComplaints";
-import { useGemini } from "@/hooks/useGemini";
+import { useAI } from "@/hooks/useAI";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -38,7 +38,7 @@ export default function HomePage() {
     isChatting,
     analyzeComplaint,
     sendChatMessage,
-  } = useGemini();
+  } = useAI();
 
   const handleInspectComplaint = useCallback((ticketId) => {
     setSelectedTicketId(ticketId);

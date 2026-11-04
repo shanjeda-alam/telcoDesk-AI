@@ -1,14 +1,10 @@
 import { NextResponse } from "next/server";
 import {
-  analyzeComplaintWithGemini,
-  GeminiServiceError,
-} from "@/lib/gemini";
-import {
+  analyzeComplaintWithGroq,
   chatWithGroqAssistant,
   GroqServiceError,
 } from "@/lib/groq";
 
-// Simple in-memory sliding-window rate limiter per client IP
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 25;
 const requestLog = new Map();
@@ -16,11 +12,11 @@ const requestLog = new Map();
 function checkRateLimit(clientKey) {
   const now = Date.now();
   const timestamps = requestLog.get(clientKey) || [];
-  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT_WINDOW_MS);
+  const recent = timestamps.filter(
+    (timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS
+  );
 
-  if (recent.length >= MAX_REQUESTS_PER_WINDOW) {
-    return false;
-  }
+  if (recent.length >= MAX_REQUESTS_PER_WINDOW) return false;
 
   recent.push(now);
   requestLog.set(clientKey, recent);
@@ -62,7 +58,7 @@ export async function POST(request) {
       );
     }
 
-    if (!body || typeof body !== "object") {
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
       return NextResponse.json(
         {
           success: false,
@@ -76,7 +72,6 @@ export async function POST(request) {
     }
 
     const { mode, payload } = body;
-
     if (!mode || typeof mode !== "string") {
       return NextResponse.json(
         {
@@ -92,13 +87,9 @@ export async function POST(request) {
     }
 
     if (mode === "analyze") {
-      const analysis = await analyzeComplaintWithGemini(payload || body);
+      const analysis = await analyzeComplaintWithGroq(payload || body);
       return NextResponse.json(
-        {
-          success: true,
-          mode: "analyze",
-          data: analysis,
-        },
+        { success: true, mode: "analyze", data: analysis },
         { status: 200 }
       );
     }
@@ -106,11 +97,7 @@ export async function POST(request) {
     if (mode === "chat") {
       const chatResult = await chatWithGroqAssistant(payload || body);
       return NextResponse.json(
-        {
-          success: true,
-          mode: "chat",
-          data: chatResult,
-        },
+        { success: true, mode: "chat", data: chatResult },
         { status: 200 }
       );
     }
@@ -126,22 +113,17 @@ export async function POST(request) {
       { status: 400 }
     );
   } catch (error) {
-    if (
-      error instanceof GeminiServiceError ||
-      error instanceof GroqServiceError
-    ) {
+    if (error instanceof GroqServiceError) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            code: error.code,
-            message: error.message,
-          },
+          error: { code: error.code, message: error.message },
         },
         { status: error.status || 500 }
       );
     }
 
+    console.error("[AI API] Unexpected request failure", error);
     return NextResponse.json(
       {
         success: false,
@@ -162,7 +144,7 @@ export async function GET() {
       success: false,
       error: {
         code: "METHOD_NOT_ALLOWED",
-        message: "Use POST /api/gemini with mode 'analyze' or 'chat'.",
+        message: "Use POST /api/ai with mode 'analyze' or 'chat'.",
       },
     },
     { status: 405 }
